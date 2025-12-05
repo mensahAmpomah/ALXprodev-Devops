@@ -2,22 +2,25 @@
 
 POKEMONS=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
 API_BASE_URL="https://pokeapi.co/api/v2/pokemon/"
+PIDS=()
 
 for POKEMON in "${POKEMONS[@]}"; do
     {
         OUTPUT_FILE="${POKEMON}.json"
         HTTP_STATUS=$(curl -s -L -w "%{http_code}" "${API_BASE_URL}${POKEMON}/" -o "$OUTPUT_FILE")
 
-        if [[ "$HTTP_STATUS" =~ ^2 ]]; then
-            echo "Fetched: $POKEMON"
-        else
-            echo "Error fetching $POKEMON (Status: $HTTP_STATUS)"
+        if [[ ! "$HTTP_STATUS" =~ ^2 ]]; then
             rm -f "$OUTPUT_FILE"
+            kill $$
         fi
     } &
+    PIDS+=($!)
 done
 
 jobs
 
-wait
+for PID in "${PIDS[@]}"; do
+    wait "$PID"
+done
+
 echo "All downloads completed"
