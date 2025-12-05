@@ -17,5 +17,7 @@ for POKEMON in "${POKEMONS[@]}"; do
     } &
 done
 
+jobs
+
 wait
 echo "All downloads completed"
