@@ -1,31 +1,22 @@
 #!/bin/bash
 
-# List of Pokémon to fetch
-POKEMONS=("Bulbasaur" "Ivysaur" "Venusaur" "Charmander" "Charmeleon")
-
+POKEMONS=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
 API_BASE_URL="https://pokeapi.co/api/v2/pokemon/"
 
 for POKEMON in "${POKEMONS[@]}"; do
-
- 
-    LOWER_NAME=$(echo "$POKEMON" | tr '[:upper:]' '[:lower:]')
-    
-    OUTPUT_FILE="${LOWER_NAME}.json"
-    
+    OUTPUT_FILE="${POKEMON}.json"
     echo "Fetching data for $POKEMON..."
 
-  
-    HTTP_STATUS=$(curl -s -L -w "%{http_code}" "${API_BASE_URL}${LOWER_NAME}/" -o "$OUTPUT_FILE")
+    HTTP_STATUS=$(curl -s -L -w "%{http_code}" "${API_BASE_URL}${POKEMON}/" -o "$OUTPUT_FILE")
 
     if [[ "$HTTP_STATUS" =~ ^2 ]]; then
         echo "Saved: $OUTPUT_FILE"
     else
-        echo " Failed: $POKEMON (Status: $HTTP_STATUS)"
-        rm -f "$OUTPUT_FILE"  # Remove invalid file
+        echo "Failed: $POKEMON (Status: $HTTP_STATUS)"
+        rm -f "$OUTPUT_FILE"
     fi
 
-    # Sleep to avoid rate limiting issues
     sleep 2
 done
 
-echo "Done fetching Pokémon data!"
+echo "Done"
