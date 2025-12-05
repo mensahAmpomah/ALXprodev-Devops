@@ -1,0 +1,15 @@
+ #!/bin/bash
+
+# API_URL="https://pokeapi.com/v2/pokemon/pikachu"
+# OUTPUT_FILE="data.json"
+# ERROR_FILE="errors.txt"
+# HTTP_STATUS=$(curl -s -L -w "%{http_code}" "$API_URL" -o "$OUTPUT_F>
+# if [[ "$HTTP_STATUS" =~ ^2 ]]; then
+#   echo "Success! Saved to $OUTPUT_FILE"
+# else
+#   echo "Error: Failed $HTTP_STATUS"
+#   rm -f "$OUTPUT_FILE"
+# fi 
+
+
+curl -s -L "https://pokeapi.co/api/v2/pokemon/pikachu" | jq
