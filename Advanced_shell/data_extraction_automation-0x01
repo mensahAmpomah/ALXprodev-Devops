@@ -7,13 +7,9 @@ if [[ ! -f "$INPUT_FILE" ]]; then
     exit 1
 fi
 
-
 NAME=$(jq -r '.name' "$INPUT_FILE" | sed 's/\b\(.\)/\u\1/')
-
 WEIGHT=$(jq '.weight' "$INPUT_FILE" | awk '{printf "%.1f", $1/10}')
-
 HEIGHT=$(jq '.height' "$INPUT_FILE" | awk '{printf "%.1f", $1/10}')
+TYPE=$(jq -r '.types[0].type.name' "$INPUT_FILE" | sed 's/\b\(.\)/\u\1/')
 
-TYPE=$(jq -r '.types[0].type.name' "$INPUT_FILE" | sed 's/\b\(.\)/\u\1/') 
-
-echo "$NAME is of type $TYPE, weighs ${WEIGHT}kg, and is ${HEIGHT}m tall."
+echo "[\"$NAME is of type $TYPE, weighs ${WEIGHT}kg, and is ${HEIGHT}m tall.\"]"
