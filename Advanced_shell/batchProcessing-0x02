@@ -2,17 +2,29 @@
 
 POKEMONS=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
 API_BASE_URL="https://pokeapi.co/api/v2/pokemon/"
+ERROR_LOG="errors.log"
+
+> "$ERROR_LOG"
 
 for POKEMON in "${POKEMONS[@]}"; do
     OUTPUT_FILE="${POKEMON}.json"
-    echo "Fetching data for $POKEMON..."
+    ATTEMPT=1
 
-    HTTP_STATUS=$(curl -s -L -w "%{http_code}" "${API_BASE_URL}${POKEMON}/" -o "$OUTPUT_FILE")
+    while [[ $ATTEMPT -le 3 ]]; do
+        HTTP_STATUS=$(curl -s -L -w "%{http_code}" "${API_BASE_URL}${POKEMON}/" -o "$OUTPUT_FILE")
+        
+        if [[ "$HTTP_STATUS" =~ ^2 ]]; then
+            echo "Success: $POKEMON"
+            break
+        else
+            echo "Attempt $ATTEMPT failed for $POKEMON (Status: $HTTP_STATUS)"
+            ATTEMPT=$((ATTEMPT + 1))
+            sleep 2
+        fi
+    done
 
-    if [[ "$HTTP_STATUS" =~ ^2 ]]; then
-        echo "Saved: $OUTPUT_FILE"
-    else
-        echo "Failed: $POKEMON (Status: $HTTP_STATUS)"
+    if [[ $ATTEMPT -gt 3 ]]; then
+        echo "Failed to fetch $POKEMON after 3 attempts" >> "$ERROR_LOG"
         rm -f "$OUTPUT_FILE"
     fi
 
